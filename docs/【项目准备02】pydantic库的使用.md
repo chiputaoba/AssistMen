@@ -4,7 +4,7 @@
 
 # 哪些类和方法可以用在大模型agent开发中，怎么用在大模型agent开发中
 1. `BaseModel`类：用于定义数据模型，通过继承它并定义字段作为注解属性，来规范数据的结构和类型。在大模型 agent 处理输入数据、输出结果或中间状态数据时，可利用`BaseModel`定义相应的数据模型，确保数据符合预期格式。在定义用户输入数据模型时：
-   ```
+   ```python
    from pydantic import BaseModel
    class UserInput(BaseModel):
        query: str
