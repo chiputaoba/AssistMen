@@ -10,3 +10,10 @@
        query: str
        num_results: int = 5
    ```
+2. 验证方法：`model_validate()`、`model_validate_json()`和`model_validate_strings()`等方法用于验证数据。在大模型 agent 接收到外部输入数据（如用户请求、其他系统传来的数据）后，使用这些方法进行验证，保证数据的有效性，避免因数据错误导致 agent 运行异常。当接收到用户输入数据时：
+      ```python
+   from pydantic import BaseModel
+   class UserInput(BaseModel):
+       query: str
+       num_results: int = 5
+   ```
