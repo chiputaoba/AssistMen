@@ -251,7 +251,8 @@ async def shutdown_event():
 - 课程中有没有讲解python高级编程技术，为fastapi的学习做铺垫
 - 课程中有没有
 
-# 以下是使用 FastAPI 创建一个基本的 ASGI 应用，并使用 Uvicorn 运行它的详细步骤和示例代码。
+# 第二阶段：Uvicorn 入门
+以下是使用 FastAPI 创建一个基本的 ASGI 应用，并使用 Uvicorn 运行它的详细步骤和示例代码。
 ### 1. 安装依赖
 首先，确保你已经安装了 `fastapi` 和 `uvicorn`。如果没有安装，可以使用以下命令进行安装：
 ```bash
@@ -309,7 +310,141 @@ dir /b
 当 Uvicorn 启动后，你可以在浏览器中访问 `http://127.0.0.1:8000`（如果使用默认的主机和端口），应该会看到 JSON 响应 `{"Hello": "World"}`。
 或者在终端中使用命令`curl http://127.0.0.1:8080`/`wget http://127.0.0.1:8000`/`http http://127.0.0.1:8000`。
 
+# 第三阶段：Uvicorn 配置与使用（现在在刚才的基础上进行扩展：...请给出项目结构与项目中每个文件中的代码）
+以下是一个基于 Uvicorn 的项目结构及相关代码示例，涵盖了 Uvicorn 配置、中间件使用和处理应用生命周期事件。
 
+### 项目结构
+```
+uvicorn_project/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── middleware.py
+│   └── lifecycle.py
+├── requirements.txt
+└── run.py
+```
+
+### 文件内容
+
+#### `requirements.txt`
+```plaintext
+fastapi>=0.68.0
+uvicorn>=0.15.0
+```
+
+#### `app/__init__.py`
+```python
+# 空文件，用于将 app 目录标记为 Python 包
+```
+
+#### `app/main.py`
+```python
+from fastapi import FastAPI
+from .middleware import setup_middleware
+from .lifecycle import startup_event_handler, shutdown_event_handler
+
+app = FastAPI()
+
+# 设置中间件
+setup_middleware(app)
+
+# 注册启动和关闭事件处理函数
+app.add_event_handler("startup", startup_event_handler)
+app.add_event_handler("shutdown", shutdown_event_handler)
+
+
+@app.get("/")
+async def read_root():
+    return {"Hello": "World"}
+```
+
+#### `app/middleware.py`
+```python
+from fastapi import FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
+import logging
+
+# 自定义中间件类
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # 请求预处理
+        logging.info(f"Received request: {request.method} {request.url}")
+
+        # 调用下一个中间件或路由处理函数
+        response = await call_next(request)
+
+        # 响应后处理
+        logging.info(f"Returning response with status code: {response.status_code}")
+
+        return response
+
+
+def setup_middleware(app: FastAPI):
+    # 添加自定义中间件
+    app.add_middleware(LoggingMiddleware)
+```
+
+#### `app/lifecycle.py`
+```python
+import logging
+
+# 启动事件处理函数
+async def startup_event_handler():
+    logging.info("Application is starting up...")
+    # 这里可以进行资源初始化，如数据库连接、加载模型等
+    # 示例：连接数据库
+    # db = await create_database_connection()
+
+
+# 关闭事件处理函数
+async def shutdown_event_handler():
+    logging.info("Application is shutting down...")
+    # 这里可以进行资源清理，如关闭数据库连接、释放模型资源等
+    # 示例：关闭数据库连接
+    # await close_database_connection()
+```
+
+#### `run.py`
+```python
+import uvicorn
+
+if __name__ == "__main__":
+    # Uvicorn 配置选项
+    uvicorn.run(
+        "app.main:app",  # 使用模块路径
+        host="0.0.0.0",  # 监听所有可用的网络接口
+        port=8000,  # 监听端口号
+        workers=4,  # 工作进程数
+        log_level="info",  # 日志级别
+        loop="uvloop",  # 事件循环策略（需要安装 uvloop）
+        http="h11",  # HTTP 协议实现
+        reload=True  # 开发模式下启用热重载
+    )
+```
+
+### 代码解释
+
+1. **`requirements.txt`**：列出项目所需的 Python 依赖包。
+2. **`app/__init__.py`**：将 `app` 目录标记为 Python 包。
+3. **`app/main.py`**：
+    - 创建 FastAPI 应用实例。
+    - 调用 `setup_middleware` 函数设置中间件。
+    - 注册启动和关闭事件处理函数。
+    - 定义一个简单的根路由。
+4. **`app/middleware.py`**：
+    - 定义一个自定义中间件类 `LoggingMiddleware`，用于记录请求和响应信息。
+    - 定义 `setup_middleware` 函数，用于将中间件添加到 FastAPI 应用中。
+5. **`app/lifecycle.py`**：
+    - 定义 `startup_event_handler` 函数，用于处理应用启动事件。
+    - 定义 `shutdown_event_handler` 函数，用于处理应用关闭事件。
+6. **`run.py`**：
+    - 使用 `uvicorn.run` 启动 FastAPI 应用。
+    - 配置 Uvicorn 的各种选项，如监听地址和端口、工作进程数、日志级别、事件循环策略、HTTP 协议实现等。
+
+通过以上项目结构和代码，你可以全面学习 Uvicorn 的配置选项、中间件的使用以及如何处理应用生命周期事件。
 
 
 
