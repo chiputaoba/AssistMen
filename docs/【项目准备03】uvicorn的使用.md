@@ -938,3 +938,33 @@ if __name__ == "__main__":
     - 配置 Uvicorn 的各种选项，如监听地址和端口、工作进程数、日志级别、事件循环策略、HTTP 协议实现等。
 
 通过这个项目，你可以实践 Uvicorn 的知识和技能，同时学习如何开发一个简单的个人博客应用。
+
+# 阶段六：参与开源项目
+以下是三个难度较小、适合新手入门的使用 Uvicorn 的开源项目：
+
+### 1. FastAPI 官方示例项目
+- **项目名称**：FastAPI 官方示例代码库
+- **项目地址**：[https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi)
+- **简介**：FastAPI 是一个基于 Python 的现代、快速（高性能）的 Web 框架，它默认使用 Uvicorn 作为服务器运行。官方示例代码库中包含了大量的示例代码，涵盖了 FastAPI 的各种功能和用法，如基本的路由定义、请求处理、响应返回、依赖注入、中间件使用等。这些示例代码结构清晰，注释详细，非常适合新手学习和入门。新手可以从简单的示例开始，逐步深入了解 FastAPI 和 Uvicorn 的使用方法。
+- **适合新手的原因**：
+    - 官方示例具有权威性和规范性，代码质量高。
+    - 每个示例都有明确的功能和说明，易于理解和模仿。
+    - 可以通过修改示例代码来进行实践，加深对 Uvicorn 和 FastAPI 的理解。
+
+### 2. Full Stack FastAPI and PostgreSQL
+- **项目名称**：Full Stack FastAPI and PostgreSQL
+- **项目地址**：[https://github.com/tiangolo/full-stack-fastapi-postgresql](https://github.com/tiangolo/full-stack-fastapi-postgresql)
+- **简介**：这是一个完整的全栈项目，使用 FastAPI 作为后端框架，PostgreSQL 作为数据库，前端使用 React。项目中使用 Uvicorn 来运行 FastAPI 应用。该项目不仅包含了基本的 Web 开发功能，还涉及到数据库的连接、操作，以及前后端的交互等。对于新手来说，通过参与这个项目，可以学习到如何构建一个完整的 Web 应用，同时深入了解 Uvicorn 在实际项目中的应用。
+- **适合新手的原因**：
+    - 项目结构清晰，有详细的文档和教程，方便新手快速上手。
+    - 涵盖了多个方面的知识，如数据库操作、前后端交互等，可以帮助新手拓宽知识面。
+    - 有活跃的社区支持，遇到问题可以及时得到解答。
+
+### 3. Starlette-Admin
+- **项目名称**：Starlette-Admin
+- **项目地址**：[https://github.com/jowilf/starlette-admin](https://github.com/jowilf/starlette-admin)
+- **简介**：Starlette-Admin 是一个基于 Starlette 框架的简单而强大的管理界面库，Starlette 是一个轻量级的 ASGI 框架，与 Uvicorn 配合使用。该项目的主要目的是为 Starlette 应用提供一个易于使用的管理界面，用于管理数据库模型等。项目代码简洁，易于理解，对于新手来说是一个很好的学习资源。通过参与这个项目，新手可以学习到如何使用 Uvicorn 来运行 Starlette 应用，以及如何开发一个简单的管理界面。
+- **适合新手的原因**：
+    - 项目代码量相对较少，容易理解和掌握。
+    - 专注于一个特定的功能（管理界面），可以让新手深入学习相关的开发技巧。
+    - 可以通过贡献代码来提升自己的编程能力和协作能力。
