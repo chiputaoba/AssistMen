@@ -446,5 +446,495 @@ if __name__ == "__main__":
 
 通过以上项目结构和代码，你可以全面学习 Uvicorn 的配置选项、中间件的使用以及如何处理应用生命周期事件。
 
+# 第四阶段：性能优化与高级应用
+以下是一个基于 Uvicorn 的项目结构及相关代码示例，涵盖了性能优化、与其他框架集成以及安全配置。
+
+### 项目结构
+```
+uvicorn_advanced_project/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── middleware.py
+│   ├── lifecycle.py
+│   ├── security.py
+│   └── models.py
+├── tests/
+│   └── performance_test.sh
+├── requirements.txt
+└── run.py
+```
+
+### 文件内容
+
+#### `requirements.txt`
+```plaintext
+fastapi>=0.68.0
+uvicorn>=0.15.0
+uvloop
+h11
+sqlalchemy
+psycopg2-binary
+python-multipart
+```
+
+#### `app/__init__.py`
+```python
+# 空文件，用于将 app 目录标记为 Python 包
+```
+
+#### `app/main.py`
+```python
+from fastapi import FastAPI
+from .middleware import setup_middleware
+from .lifecycle import startup_event_handler, shutdown_event_handler
+from .security import setup_security
+from .models import Item
+
+app = FastAPI()
+
+# 设置中间件
+setup_middleware(app)
+
+# 注册启动和关闭事件处理函数
+app.add_event_handler("startup", startup_event_handler)
+app.add_event_handler("shutdown", shutdown_event_handler)
+
+# 设置安全配置
+setup_security(app)
 
 
+@app.get("/")
+async def read_root():
+    return {"Hello": "World"}
+
+
+@app.post("/items/")
+async def create_item(item: Item):
+    return item
+```
+
+#### `app/middleware.py`
+```python
+from fastapi import FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
+import logging
+
+# 自定义中间件类
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # 请求预处理
+        logging.info(f"Received request: {request.method} {request.url}")
+
+        # 调用下一个中间件或路由处理函数
+        response = await call_next(request)
+
+        # 响应后处理
+        logging.info(f"Returning response with status code: {response.status_code}")
+
+        return response
+
+
+def setup_middleware(app: FastAPI):
+    # 添加自定义中间件
+    app.add_middleware(LoggingMiddleware)
+```
+
+#### `app/lifecycle.py`
+```python
+import logging
+
+# 启动事件处理函数
+async def startup_event_handler():
+    logging.info("Application is starting up...")
+    # 这里可以进行资源初始化，如数据库连接、加载模型等
+
+
+# 关闭事件处理函数
+async def shutdown_event_handler():
+    logging.info("Application is shutting down...")
+    # 这里可以进行资源清理，如关闭数据库连接、释放模型资源等
+```
+
+#### `app/security.py`
+```python
+from fastapi import FastAPI
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+
+def setup_security(app: FastAPI):
+    # 启用 HTTPS 重定向中间件（生产环境中使用）
+    # app.add_middleware(HTTPSRedirectMiddleware)
+
+    # 设置可信主机中间件，防止 HTTP 主机头攻击
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["example.com", "www.example.com"])
+```
+
+#### `app/models.py`
+```python
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    name: str
+    price: float
+```
+
+#### `tests/performance_test.sh`
+```bash
+#!/bin/bash
+
+# 使用 ab 进行性能测试
+ab -n 1000 -c 100 http://127.0.0.1:8000/
+```
+
+#### `run.py`
+```python
+import uvicorn
+
+if __name__ == "__main__":
+    # Uvicorn 配置选项
+    uvicorn.run(
+        "app.main:app",  # 使用模块路径
+        host="0.0.0.0",  # 监听所有可用的网络接口
+        port=8000,  # 监听端口号
+        workers=4,  # 工作进程数
+        log_level="info",  # 日志级别
+        loop="uvloop",  # 事件循环策略（需要安装 uvloop）
+        http="h11",  # HTTP 协议实现
+        reload=True  # 开发模式下启用热重载
+    )
+```
+
+### 代码解释
+
+1. **`requirements.txt`**：列出项目所需的 Python 依赖包，包括 `uvloop` 和 `h11` 用于性能优化，`sqlalchemy` 和 `psycopg2-binary` 用于数据库操作。
+2. **`app/__init__.py`**：将 `app` 目录标记为 Python 包。
+3. **`app/main.py`**：
+    - 创建 FastAPI 应用实例。
+    - 调用 `setup_middleware` 函数设置中间件。
+    - 注册启动和关闭事件处理函数。
+    - 调用 `setup_security` 函数设置安全配置。
+    - 定义一个简单的根路由和一个 POST 路由。
+4. **`app/middleware.py`**：
+    - 定义一个自定义中间件类 `LoggingMiddleware`，用于记录请求和响应信息。
+    - 定义 `setup_middleware` 函数，用于将中间件添加到 FastAPI 应用中。
+5. **`app/lifecycle.py`**：
+    - 定义 `startup_event_handler` 函数，用于处理应用启动事件。
+    - 定义 `shutdown_event_handler` 函数，用于处理应用关闭事件。
+6. **`app/security.py`**：
+    - 定义 `setup_security` 函数，用于设置安全配置，包括启用 HTTPS 重定向中间件和设置可信主机中间件。
+7. **`app/models.py`**：定义一个 Pydantic 模型 `Item`，用于处理 POST 请求的数据。
+8. **`tests/performance_test.sh`**：使用 `ab` 工具对应用进行性能测试。
+9. **`run.py`**：
+    - 使用 `uvicorn.run` 启动 FastAPI 应用。
+    - 配置 Uvicorn 的各种选项，如监听地址和端口、工作进程数、日志级别、事件循环策略、HTTP 协议实现等。
+
+通过以上项目结构和代码，你可以学习 Uvicorn 的性能优化方法、与 FastAPI 框架的集成以及安全配置。
+
+# 第五阶段：实践与项目经验积累
+以下是一个简单的个人博客项目结构及相关代码示例，结合了之前所学的 Uvicorn 知识和技能。
+
+### 项目结构
+```
+blog_project/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── middleware.py
+│   ├── lifecycle.py
+│   ├── security.py
+│   ├── models.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   └── blog.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   └── blog.py
+│   └── database.py
+├── templates/
+│   └── index.html
+├── static/
+│   └── style.css
+├── tests/
+│   └── performance_test.sh
+├── requirements.txt
+└── run.py
+```
+
+### 文件内容
+
+#### `requirements.txt`
+```plaintext
+fastapi>=0.68.0
+uvicorn>=0.15.0
+uvloop
+h11
+sqlalchemy
+psycopg2-binary
+python-multipart
+jinja2
+```
+
+#### `app/__init__.py`
+```python
+# 空文件，用于将 app 目录标记为 Python 包
+```
+
+#### `app/main.py`
+```python
+from fastapi import FastAPI
+from .middleware import setup_middleware
+from .lifecycle import startup_event_handler, shutdown_event_handler
+from .security import setup_security
+from .routers import blog
+
+app = FastAPI()
+
+# 设置中间件
+setup_middleware(app)
+
+# 注册启动和关闭事件处理函数
+app.add_event_handler("startup", startup_event_handler)
+app.add_event_handler("shutdown", shutdown_event_handler)
+
+# 设置安全配置
+setup_security(app)
+
+# 包含博客路由
+app.include_router(blog.router)
+
+
+@app.get("/")
+async def read_root():
+    return {"Hello": "Welcome to my blog!"}
+```
+
+#### `app/middleware.py`
+```python
+from fastapi import FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
+import logging
+
+# 自定义中间件类
+class LoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # 请求预处理
+        logging.info(f"Received request: {request.method} {request.url}")
+
+        # 调用下一个中间件或路由处理函数
+        response = await call_next(request)
+
+        # 响应后处理
+        logging.info(f"Returning response with status code: {response.status_code}")
+
+        return response
+
+
+def setup_middleware(app: FastAPI):
+    # 添加自定义中间件
+    app.add_middleware(LoggingMiddleware)
+```
+
+#### `app/lifecycle.py`
+```python
+import logging
+
+# 启动事件处理函数
+async def startup_event_handler():
+    logging.info("Application is starting up...")
+    # 这里可以进行资源初始化，如数据库连接、加载模型等
+
+
+# 关闭事件处理函数
+async def shutdown_event_handler():
+    logging.info("Application is shutting down...")
+    # 这里可以进行资源清理，如关闭数据库连接、释放模型资源等
+```
+
+#### `app/security.py`
+```python
+from fastapi import FastAPI
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+
+def setup_security(app: FastAPI):
+    # 启用 HTTPS 重定向中间件（生产环境中使用）
+    # app.add_middleware(HTTPSRedirectMiddleware)
+
+    # 设置可信主机中间件，防止 HTTP 主机头攻击
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["example.com", "www.example.com"])
+```
+
+#### `app/models.py`
+```python
+from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class BlogPost(Base):
+    __tablename__ = "blog_posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(100), nullable=False)
+    content = Column(Text, nullable=False)
+```
+
+#### `app/routers/blog.py`
+```python
+from fastapi import APIRouter
+from ..schemas.blog import BlogPostCreate, BlogPostResponse
+from ..database import SessionLocal
+from ..models import BlogPost
+
+router = APIRouter()
+
+
+@router.post("/posts/", response_model=BlogPostResponse)
+async def create_blog_post(post: BlogPostCreate):
+    db = SessionLocal()
+    try:
+        new_post = BlogPost(title=post.title, content=post.content)
+        db.add(new_post)
+        db.commit()
+        db.refresh(new_post)
+        return new_post
+    finally:
+        db.close()
+
+
+@router.get("/posts/", response_model=list[BlogPostResponse])
+async def get_all_blog_posts():
+    db = SessionLocal()
+    try:
+        posts = db.query(BlogPost).all()
+        return posts
+    finally:
+        db.close()
+```
+
+#### `app/schemas/blog.py`
+```python
+from pydantic import BaseModel
+
+class BlogPostCreate(BaseModel):
+    title: str
+    content: str
+
+class BlogPostResponse(BaseModel):
+    id: int
+    title: str
+    content: str
+
+    class Config:
+        orm_mode = True
+```
+
+#### `app/database.py`
+```python
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+# 数据库连接字符串
+SQLALCHEMY_DATABASE_URL = "sqlite:///./blog.db"
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+```
+
+#### `templates/index.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>My Blog</title>
+</head>
+<body>
+    <h1>Welcome to my blog!</h1>
+    <p>Here you can read my latest posts.</p>
+</body>
+</html>
+```
+
+#### `static/style.css`
+```css
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+p {
+    color: #666;
+}
+```
+
+#### `tests/performance_test.sh`
+```bash
+#!/bin/bash
+
+# 使用 ab 进行性能测试
+ab -n 1000 -c 100 http://127.0.0.1:8000/
+```
+
+#### `run.py`
+```python
+import uvicorn
+
+if __name__ == "__main__":
+    # Uvicorn 配置选项
+    uvicorn.run(
+        "app.main:app",  # 使用模块路径
+        host="0.0.0.0",  # 监听所有可用的网络接口
+        port=8000,  # 监听端口号
+        workers=4,  # 工作进程数
+        log_level="info",  # 日志级别
+        loop="uvloop",  # 事件循环策略（需要安装 uvloop）
+        http="h11",  # HTTP 协议实现
+        reload=True  # 开发模式下启用热重载
+    )
+```
+
+### 代码解释
+
+1. **`requirements.txt`**：列出项目所需的 Python 依赖包，包括 `uvloop` 和 `h11` 用于性能优化，`sqlalchemy` 和 `psycopg2-binary` 用于数据库操作，`jinja2` 用于模板渲染。
+2. **`app/__init__.py`**：将 `app` 目录标记为 Python 包。
+3. **`app/main.py`**：
+    - 创建 FastAPI 应用实例。
+    - 调用 `setup_middleware` 函数设置中间件。
+    - 注册启动和关闭事件处理函数。
+    - 调用 `setup_security` 函数设置安全配置。
+    - 包含博客路由。
+    - 定义一个简单的根路由。
+4. **`app/middleware.py`**：
+    - 定义一个自定义中间件类 `LoggingMiddleware`，用于记录请求和响应信息。
+    - 定义 `setup_middleware` 函数，用于将中间件添加到 FastAPI 应用中。
+5. **`app/lifecycle.py`**：
+    - 定义 `startup_event_handler` 函数，用于处理应用启动事件。
+    - 定义 `shutdown_event_handler` 函数，用于处理应用关闭事件。
+6. **`app/security.py`**：
+    - 定义 `setup_security` 函数，用于设置安全配置，包括启用 HTTPS 重定向中间件和设置可信主机中间件。
+7. **`app/models.py`**：定义一个 SQLAlchemy 模型 `BlogPost`，用于表示博客文章。
+8. **`app/routers/blog.py`**：定义博客相关的路由，包括创建博客文章和获取所有博客文章的接口。
+9. **`app/schemas/blog.py`**：定义 Pydantic 模型，用于请求和响应数据的验证和序列化。
+10. **`app/database.py`**：配置 SQLAlchemy 数据库连接。
+11. **`templates/index.html`**：定义一个简单的 HTML 模板，用于显示博客首页。
+12. **`static/style.css`**：定义一些基本的 CSS 样式。
+13. **`tests/performance_test.sh`**：使用 `ab` 工具对应用进行性能测试。
+14. **`run.py`**：
+    - 使用 `uvicorn.run` 启动 FastAPI 应用。
+    - 配置 Uvicorn 的各种选项，如监听地址和端口、工作进程数、日志级别、事件循环策略、HTTP 协议实现等。
+
+通过这个项目，你可以实践 Uvicorn 的知识和技能，同时学习如何开发一个简单的个人博客应用。
