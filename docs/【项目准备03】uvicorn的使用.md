@@ -175,9 +175,11 @@ async def shutdown_event():
     print("Application is shutting down...")
 ```
 这些函数可用于初始化资源（如数据库连接、加载大模型等）和清理资源（如关闭数据库连接等）。
+
 5. **性能优化范式**：
     - **设置工作进程数**：根据服务器的 CPU 核心数和应用的负载情况，合理设置工作进程数（`--workers` 选项或 `uvicorn.Config` 类中的 `workers` 参数），以提高应用的并发处理能力。
     - **选择合适的事件循环和 HTTP 协议实现**：例如使用 `uvloop` 作为事件循环（`--loop uvloop`）和 `httptools` 作为 HTTP 协议实现（`--http httptools`），以提升性能。
+
 6. **日志配置范式**：
     - **设置日志级别**：通过 `--log-level` 选项或 `uvicorn.Config` 类中的 `log_level` 参数设置日志级别，如 `debug`、`info`、`warning`、`error` 等，以控制日志的详细程度。
     - **自定义日志格式**：可以使用 Uvicorn 的日志配置功能来自定义日志格式，使其更符合项目需求，便于监控和调试应用。
