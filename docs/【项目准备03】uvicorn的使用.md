@@ -250,3 +250,66 @@ async def shutdown_event():
 # uvicorn/asgi/fastapi报班鉴别
 - 课程中有没有讲解python高级编程技术，为fastapi的学习做铺垫
 - 课程中有没有
+
+# 以下是使用 FastAPI 创建一个基本的 ASGI 应用，并使用 Uvicorn 运行它的详细步骤和示例代码。
+### 1. 安装依赖
+首先，确保你已经安装了 `fastapi` 和 `uvicorn`。如果没有安装，可以使用以下命令进行安装：
+```bash
+pip install fastapi uvicorn
+```
+
+### 2. 创建一个基本的 FastAPI 应用
+创建一个 Python 文件，例如 `main.py`，并编写以下代码：
+```python
+# main.py
+from fastapi import FastAPI
+
+# 创建 FastAPI 应用实例
+app = FastAPI()
+
+# 定义一个简单的根路由，用于处理 GET 请求
+@app.get("/")
+async def read_root():
+    return {"Hello": "World"}
+```
+
+### 3. 使用 Uvicorn 运行应用
+在命令行中，可以使用以下命令来运行这个 FastAPI 应用：
+```bash
+uvicorn main:app --reload
+```
+解释一下这个命令：
+- `main`：这是 Python 模块的名称，也就是 `main.py` 文件去掉 `.py` 后缀。
+- `app`：这是 FastAPI 应用实例的名称，在 `main.py` 文件中定义的 `app = FastAPI()`。
+- `--reload`：这是一个启动选项，它会启用自动重载功能，当你修改代码并保存时，Uvicorn 会自动重新启动应用，方便开发调试。
+
+### 4. 其他基本启动选项
+除了 `--reload` 选项，Uvicorn 还有一些其他常用的启动选项：
+- `--host`：指定监听的 IP 地址，默认为 `127.0.0.1`。例如，要监听所有可用的网络接口，可以使用 `--host 0.0.0.0`。
+- `--port`：指定监听的端口号，默认为 `8000`。例如，要使用端口号 `8080`，可以使用 `--port 8080`。
+- `--log-level`：指定日志级别，默认为 `info`。例如，要只显示错误日志，可以使用 `--log-level error`。
+
+例如，以下命令会在所有可用的网络接口上监听端口号 `8080`，并只显示错误日志：
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8080 --log-level error
+```
+
+### 5. 验证应用是否正常运行
+在 Windows 系统中，`dir` 命令用于列出当前目录下的文件和子目录。在 Anaconda Prompt 中输入以下命令并回车：
+```bash
+dir
+```
+这个命令会列出当前工作目录下的所有文件和子目录，包括文件的大小、创建日期和时间等详细信息。
+
+如果你只想查看目录名和文件名，不关心其他详细信息，可以使用以下命令：
+```bash
+dir /b
+```
+其中，`/b` 选项表示只显示文件和目录的名称，不显示其他信息。
+当 Uvicorn 启动后，你可以在浏览器中访问 `http://127.0.0.1:8000`（如果使用默认的主机和端口），应该会看到 JSON 响应 `{"Hello": "World"}`。
+或者在终端中使用命令`curl http://127.0.0.1:8080`/`wget http://127.0.0.1:8000`/`http http://127.0.0.1:8000`。
+
+
+
+
+
