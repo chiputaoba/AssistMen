@@ -111,4 +111,90 @@ async def root():
 - **代理头处理**：若使用负载均衡器或反向代理，需配置代理头，以便获取真实的客户端IP等信息。
 
 
+# 请从Uvicorn 的官方文档链接中总结在大模型agent开发中必须掌握的uvicorn的开发范式，要求回答全面详细
+在大模型 agent 开发中，使用 Uvicorn 时以下这些开发范式是必须掌握的，它们有助于构建高效、稳定且易于维护的 ASGI 应用：
+1. **基本应用启动范式**：
+    - **安装与导入**：首先通过 `pip install uvicorn` 安装 Uvicorn。然后在 Python 代码中，虽然通常不需要显式导入 Uvicorn 的模块来构建应用逻辑，但在运行应用时会用到 Uvicorn 的命令行工具。
+    - **定义 ASGI 应用**：以 FastAPI 为例（FastAPI 是基于 ASGI 的框架，常与 Uvicorn 配合使用），创建一个简单的 ASGI 应用。
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+```
+    - **运行应用**：在终端中使用 `uvicorn <模块名>:<应用实例名>` 命令来启动应用。比如上述代码保存在 `main.py` 中，则运行 `uvicorn main:app`。
+2. **配置应用范式**：
+    - **使用 `uvicorn.Config` 类**：通过 `uvicorn.Config` 类可以更灵活地配置 Uvicorn 应用。例如：
+```python
+import uvicorn
+from fastapi import FastAPI
+
+app = FastAPI()
+
+config = uvicorn.Config(app, host="0.0.0.0", port=8000, log_level="info", workers=4)
+server = uvicorn.Server(config)
+server.run()
+```
+这里设置了监听地址、端口、日志级别和工作进程数等参数。
+    - **命令行参数配置**：也可以通过命令行参数来配置 Uvicorn，如 `uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4 --log-level info`，这种方式在开发和部署时都很常用。
+3. **中间件使用范式**：
+    - **添加自定义中间件**：在 ASGI 应用中添加中间件来处理通用逻辑。以 FastAPI 应用为例：
+```python
+from fastapi import FastAPI
+from starlette.middleware.base import BaseHTTPMiddleware
+
+app = FastAPI()
+
+async def custom_middleware(request, call_next):
+    # 处理请求前的逻辑
+    print("Before request")
+    response = await call_next(request)
+    # 处理响应后的逻辑
+    print("After request")
+    return response
+
+app.add_middleware(BaseHTTPMiddleware, dispatch=custom_middleware)
+```
+    - **使用 Uvicorn 内置中间件**：如 `uvicorn.middleware.proxy_headers.ProxyHeadersMiddleware` 用于处理代理头信息，当应用部署在反向代理或负载均衡器后面时很有用。
+4. **处理应用生命周期事件范式**：
+    - **注册启动和关闭事件**：在 ASGI 应用中，可以注册在应用启动和关闭时执行的函数。以 FastAPI 为例：
+```python
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    print("Application is starting up...")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("Application is shutting down...")
+```
+这些函数可用于初始化资源（如数据库连接、加载大模型等）和清理资源（如关闭数据库连接等）。
+5. **性能优化范式**：
+    - **设置工作进程数**：根据服务器的 CPU 核心数和应用的负载情况，合理设置工作进程数（`--workers` 选项或 `uvicorn.Config` 类中的 `workers` 参数），以提高应用的并发处理能力。
+    - **选择合适的事件循环和 HTTP 协议实现**：例如使用 `uvloop` 作为事件循环（`--loop uvloop`）和 `httptools` 作为 HTTP 协议实现（`--http httptools`），以提升性能。
+6. **日志配置范式**：
+    - **设置日志级别**：通过 `--log-level` 选项或 `uvicorn.Config` 类中的 `log_level` 参数设置日志级别，如 `debug`、`info`、`warning`、`error` 等，以控制日志的详细程度。
+    - **自定义日志格式**：可以使用 Uvicorn 的日志配置功能来自定义日志格式，使其更符合项目需求，便于监控和调试应用。
+
+掌握这些 Uvicorn 的开发范式，能够在大模型 agent 开发中更好地部署和管理 ASGI 应用，提升应用的性能和稳定性。 
+
+# 在大模型 agent 开发中必须掌握的 Uvicorn 的类和方法
+以下是在大模型agent开发中必须掌握的Uvicorn的类和方法：
+
+### 类
+- **uvicorn.Config**：用于配置Uvicorn服务器的类。可以通过实例化该类来设置各种服务器参数，如`app`（ASGI应用实例）、`host`（监听地址）、`port`（监听端口）、`loop`（事件循环策略）、`http`（HTTP协议实现）等。
+- **uvicorn.middleware.proxy_headers.ProxyHeadersMiddleware**：处理代理头的中间件类。当使用负载均衡器或反向代理时，可使用该中间件来获取真实的客户端IP等信息。
+- **uvicorn.middleware.debug.DebugMiddleware**：用于调试的中间件类。可以帮助开发者在开发过程中更方便地查看请求和响应的相关信息，辅助定位问题。
+
+### 方法
+- **uvicorn.run**：Uvicorn的核心运行方法。用于启动Uvicorn服务器来运行ASGI应用。可接受多个参数，如`app`指定ASGI应用，`host`、`port`、`workers`、`reload`、`log_level`等用于配置服务器的运行参数。
+- **app.add_middleware**：在ASGI应用（如FastAPI应用）中添加中间件的方法。可以用来执行通用逻辑，如身份验证、请求记录、修改请求和响应等操作。
+- **app.on_event**：用于注册ASGI应用生命周期事件处理函数的方法。例如`on_event("startup")`可以注册在应用启动时执行的函数，`on_event("shutdown")`可以注册在应用关闭时执行的函数，用于进行一些资源清理等操作。
+
 # 
