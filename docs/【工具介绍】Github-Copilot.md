@@ -65,3 +65,71 @@ Codespace 是 GitHub 提供的一种基于云的开发环境。以下是关于 C
 - 回顾用户完成的所有任务，如在 Codespace 中设置 Copilot、使用 Copilot 接受建议代码等。
 - 提供后续学习和资源链接，如 GitHub Copilot 的相关文档、企业账户信息、入门指南、配置设置等。
 - 给出下一步建议，如分享课程反馈、学习其他 GitHub 技能、阅读 GitHub 入门文档、探索项目等。
+
+# 4-copilot-comment.md的翻译
+<!--
+  <<< 作者备注：步骤 4 >>>
+  开始此步骤前，先对前一个步骤予以确认。
+  定义相关术语并链接到 docs.github.com。
+-->
+
+## 步骤 4：使用注释让 Copilot 生成代码
+
+_很不错，你已经会使用 Copilot 选项卡啦！_ 🥳
+
+你现在已经利用了 Copilot 快速选项卡的自动建议功能以及 Copilot 中心来接受人工智能生成的建议了。
+
+现在，让我们来看看如何利用注释来生成 Copilot 建议！
+
+### :keyboard: 活动：将最新代码拉取到 Codespace 仓库。
+
+> **注意**
+> 在下一个活动之前，必须先进行拉取操作。
+
+1. 使用 VS Code 终端拉取最新代码：
+
+   ```
+   git pull
+   ```
+
+### :keyboard: 活动：从注释生成 Copilot 建议代码。
+
+1. 在 Codespace 中的 VS Code 资源管理器窗口内创建一个新文件。（如果你之前关闭了 Codespace，请重新打开或创建一个新的 Codespace。）
+2. 将文件命名为 `comments.js`。
+3. 在文件中输入以下注释：
+   ```
+   // 创建 Web 服务器
+   ```
+4. 按 `enter` 键换行。
+5. Copilot 将会给出一个代码块建议。
+6. 将鼠标悬停在红色波浪线上，然后选择 `...`。
+
+   > **注意**
+   > 如果你没有看到 Copilot 代码块建议或者红色波浪线以及三个点 `...`，可以按 `control + enter` 组合键调出 GitHub Copilot 完成面板。
+
+7. 点击 `打开完成面板`。Copilot 将会合成大约 10 个不同的代码建议。你应该会看到类似如下的内容：
+   ![2023 年 4 月 25 日下午 3:59:42 的屏幕截图](https://user-images.githubusercontent.com/26442605/234425509-74ea96e0-bbd6-417b-84c5-73546ac7b2cd.png)
+8. 找到你喜欢的解决方案，然后点击 `接受解决方案`。
+9. 你的 `comments.js` 文件将会用你选择的解决方案进行更新。
+
+### :keyboard: 活动：从 Codespace 将代码推送到你的仓库。
+
+1. 使用 VS Code 终端将 `comments.js` 文件添加到仓库中：
+
+   ```
+   git add comments.js
+   ```
+
+2. 接着在 VS Code 终端中暂存并将更改提交到仓库：
+
+   ```
+   git commit -m "Copilot 第三次提交"
+   ```
+
+3. 最后从 VS Code 终端将代码推送到仓库：
+
+   ```
+   git push
+   ```
+
+**等待约 60 秒，然后刷新你的仓库主页以进行下一步操作。**
