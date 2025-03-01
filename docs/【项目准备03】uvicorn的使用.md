@@ -245,4 +245,6 @@ async def shutdown_event():
 - **ASGI**：适用于开发对实时性、高并发处理能力要求较高的应用，如异步I/O密集型的Web应用、实时数据推送服务、WebSocket应用等。像FastAPI配合Uvicorn在处理大量并发的API请求时，利用ASGI的异步特性可以实现高性能。
 - **WSGI**：更适合传统的、以HTTP请求-响应为主的Web应用开发，如Django框架在默认情况下使用WSGI，适用于构建各种类型的网站，包括博客、企业网站、电子商务网站等，这些应用通常不需要处理大量的实时并发请求。
 
-# 
+# uvicorn/asgi/fastapi报班鉴别
+- 课程中有没有讲解python高级编程技术，为fastapi的学习做铺垫
+- 课程中有没有
