@@ -148,3 +148,31 @@ class Redis(Commands):
 
 ### 官方解释
 你可以在 `redis-py` 的官方文档中查看 `execute_command` 方法的详细解释。官方文档地址是 https://redis-py.readthedocs.io/ 。在文档中搜索 `execute_command` 即可找到相关的说明和示例。官方文档会对该方法的参数、返回值、使用注意事项等进行详细介绍，有助于你更好地理解和使用该方法。
+
+# 子类继承父类，子类可以从父类继承什么
+在 Python 中，当一个子类继承父类时，子类可以从父类继承以下内容，下面结合你提供的代码详细说明 `SemanticCache` 子类从 `RedisSemanticCache` 父类继承的情况：
+
+### 1. 方法
+子类可以继承父类中定义的所有方法，并且可以直接使用这些方法。在你的代码中，`SemanticCache` 子类继承了 `RedisSemanticCache` 父类的以下方法：
+- **`__init__` 方法**：子类继承了父类的初始化方法，这意味着创建 `SemanticCache` 类的实例时，会调用父类的 `__init__` 方法来初始化实例的属性，例如 `self.redis_client`、`self.embedding` 和 `self.prefix`。
+```python
+semantic_cache = SemanticCache(    # 会调用父类的 __init__ 方法进行初始化
+    host='192.168.110.131',  # 根据自己的实际情况调整 host
+    password='snowball2019',  # 根据自己的实际情况调整 password
+    port=6379,  # 根据自己的实际情况调整 port
+    db=0,  # 根据自己的实际情况调整 db
+    embedding_model=embedding
+)
+```
+
+### 2. 属性
+子类继承父类的属性，在实例化子类对象时，这些属性会被初始化并可以在子类中使用。在你的代码中，`SemanticCache` 子类继承了父类的以下属性：
+- **`self.redis_client`**：用于与 Redis 服务器进行交互的客户端对象。
+- **`self.embedding`**：嵌入模型，用于生成文本的向量表示。
+- **`self.prefix`**：缓存键的前缀，用于命名空间隔离。
+
+### 注意事项
+- **方法重写**：子类可以重写父类的方法，以实现不同的行为。如果子类中定义了与父类同名的方法，那么在调用该方法时，会优先调用子类的方法。
+- **私有方法和属性**：在 Python 中，以单下划线开头的方法和属性（如 `_create_key`）是一种约定，表示这些方法和属性是私有的，不建议在类外部直接访问，但子类仍然可以继承和使用它们。以双下划线开头的方法和属性是真正的私有成员，子类无法直接继承。
+
+综上所述，`SemanticCache` 子类继承了 `RedisSemanticCache` 父类的所有方法和属性，从而可以复用父类的功能，并在此基础上添加自己的方法（如 `similarity_search`）来实现更复杂的功能。 
