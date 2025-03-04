@@ -46,4 +46,26 @@ print(decoded_result)
 
 通过以上步骤，你可以方便地使用 `hgetall` 方法从 Redis 中获取哈希数据。 
 
-# 
+在你提供的代码中，假设 `Redis` 服务器已经正确运行且可以正常连接，并且代码中的操作都能顺利执行，两个 `print` 语句的结果如下：
+
+1. 第一个 `print(result)` 语句：
+
+`result` 变量存储的是通过 `redis_client.hgetall(key)` 获取到的哈希键 `user:1` 对应的所有字段和值。由于 `Redis` 中获取到的键值对默认是字节类型（`bytes`），所以第一个 `print` 语句输出的结果会是一个包含字节类型键值对的字典。
+
+例如：
+```
+{b'name': b'John', b'age': b'30', b'city': b'New York'}
+```
+
+2. 第二个 `print(decoded_result)` 语句：
+
+`decoded_result` 是通过字典推导式 `{k.decode(): v.decode() for k, v in result.items()}` 将 `result` 字典中字节类型的键和值转换为字符串类型后得到的新字典。
+
+所以第二个 `print` 语句输出的结果会是一个包含字符串类型键值对的字典。
+
+例如：
+```
+{'name': 'John', 'age': '30', 'city': 'New York'}
+```
+
+需要注意的是，以上结果是在 `Redis` 服务器正常运行且代码执行无错误的情况下得到的。如果 `Redis` 服务器无法连接或者代码执行过程中出现异常（如 `Redis` 中不存在 `user:1` 这个哈希键），则结果会有所不同。 
