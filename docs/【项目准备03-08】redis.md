@@ -69,3 +69,7 @@ print(decoded_result)
 ```
 
 需要注意的是，以上结果是在 `Redis` 服务器正常运行且代码执行无错误的情况下得到的。如果 `Redis` 服务器无法连接或者代码执行过程中出现异常（如 `Redis` 中不存在 `user:1` 这个哈希键），则结果会有所不同。 
+
+# [key.decode() for key in self.redis_client.keys(pattern)]其中key是什么数据类型
+在表达式 `[key.decode() for key in self.redis_client.keys(pattern)]` 中，`key` 的原始数据类型是 `bytes`（字节类型）
+
