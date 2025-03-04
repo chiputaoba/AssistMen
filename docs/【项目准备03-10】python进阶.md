@@ -176,3 +176,54 @@ semantic_cache = SemanticCache(    # 会调用父类的 __init__ 方法进行初
 - **私有方法和属性**：在 Python 中，以单下划线开头的方法和属性（如 `_create_key`）是一种约定，表示这些方法和属性是私有的，不建议在类外部直接访问，但子类仍然可以继承和使用它们。以双下划线开头的方法和属性是真正的私有成员，子类无法直接继承。
 
 综上所述，`SemanticCache` 子类继承了 `RedisSemanticCache` 父类的所有方法和属性，从而可以复用父类的功能，并在此基础上添加自己的方法（如 `similarity_search`）来实现更复杂的功能。 
+
+# sorted(results, key=lambda x: x['similarity'], reverse=True)
+这行代码 `sorted(results, key=lambda x: x['similarity'], reverse=True)` 是使用 Python 内置的 `sorted()` 函数对 `results` 列表进行排序操作。下面详细解释这行代码的各个部分及其功能。
+
+### 整体功能概述
+这行代码的主要功能是根据 `results` 列表中每个元素的 `'similarity'` 键对应的值，对 `results` 列表进行降序排序。
+
+### 代码详细解释
+
+#### 1. `sorted()` 函数
+`sorted()` 是 Python 的内置函数，用于对可迭代对象（如列表、元组等）进行排序，并返回一个新的已排序列表，原可迭代对象不会被修改。其基本语法如下：
+```python
+sorted(iterable, key=None, reverse=False)
+```
+- `iterable`：必需参数，表示要排序的可迭代对象，在这行代码中是 `results` 列表。
+- `key`：可选参数，是一个函数，用于指定排序的规则。这个函数会作用于可迭代对象中的每个元素，根据函数的返回值来进行排序。
+- `reverse`：可选参数，是一个布尔值。如果设置为 `True`，则进行降序排序；如果设置为 `False`（默认值），则进行升序排序。
+
+#### 2. `key=lambda x: x['similarity']`
+- `lambda` 是 Python 中的匿名函数，用于创建简单的、一次性使用的函数。
+- `lambda x: x['similarity']` 定义了一个匿名函数，它接受一个参数 `x`，并返回 `x` 字典中 `'similarity'` 键对应的值。
+- 在 `sorted()` 函数中，这个匿名函数作为 `key` 参数，意味着 `sorted()` 函数会根据 `results` 列表中每个元素（假设是字典）的 `'similarity'` 键对应的值来进行排序。
+
+#### 3. `reverse=True`
+将 `reverse` 参数设置为 `True`，表示进行降序排序，即相似度值从大到小排列。
+
+### 示例代码
+```python
+results = [
+    {'text': '文本1', 'similarity': 0.7},
+    {'text': '文本2', 'similarity': 0.9},
+    {'text': '文本3', 'similarity': 0.8}
+]
+
+sorted_results = sorted(results, key=lambda x: x['similarity'], reverse=True)
+print(sorted_results)
+```
+
+### 代码输出
+```
+[
+    {'text': '文本2', 'similarity': 0.9},
+    {'text': '文本3', 'similarity': 0.8},
+    {'text': '文本1', 'similarity': 0.7}
+]
+```
+
+### 总结
+这行代码通过 `sorted()` 函数和 `lambda` 匿名函数，根据 `results` 列表中每个元素的 `'similarity'` 键对应的值对列表进行降序排序，最终返回一个新的已排序列表。在实际应用中，常用于根据某个特定字段对数据列表进行排序，以便展示或进一步处理。 
+
+# 
