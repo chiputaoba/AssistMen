@@ -11,9 +11,9 @@ def __init__(self):
     self.current_documents = {}
 ```
 - 使用 `SentenceTransformer` 加载多语言模型 `paraphrase-multilingual-MiniLM-L12-v2`，以支持中文文本处理。
-- 创建一个名为 `indexes` 的目录，用于存储索引文件和文档数据。
+- 创建一个名为 `indexes` 的目录，用于存储索引和文档。
 - 初始化索引维度为 384，与模型输出维度一致。
-- 初始化当前索引和文档存储为空。
+- 初始化索引为空，初始化文档为空。
 
 ### 辅助方法
 1. **`_generate_safe_id`**:
@@ -23,7 +23,7 @@ def _generate_safe_id(self, metadata: dict) -> str:
     file_info = f"{metadata.get('filename', '')}_{timestamp}"
     return hashlib.md5(file_info.encode()).hexdigest()
 ```
-    - 根据文件元数据和时间戳生成唯一的安全文件 ID。
+    - 根据文件名和当前时间生成哈希值，用作文件的唯一ID。
 
 2. **`_create_index`**:
 ```python
@@ -38,7 +38,7 @@ def _get_index_path(self, file_path: str) -> str:
     file_hash = hashlib.md5(file_path.encode()).hexdigest()
     return f"indexes/index_{file_hash}.bin"
 ```
-    - 根据文件路径的哈希值生成索引文件的路径。
+    - 将`file_path`的哈希值生作为二进制索引文件的文件名。
 
 ### 核心方法
 1. **`create_embeddings`**:
