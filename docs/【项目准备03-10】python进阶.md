@@ -458,4 +458,58 @@ mypy main.py
 
 通过以上步骤，你就可以有效地使用存根文件为Python代码添加类型信息，并进行静态类型检查。 
 
-# 
+# python的builtins帮助信息说明
+**翻译**：
+描述
+    此模块提供了对 Python 所有“内置”标识符的直接访问；例如，`builtins.len` 是内置函数 `len()` 的完整名称。
+    大多数应用程序通常不会显式访问此模块，但对于那些提供了与某个内置值同名对象的模块来说，该模块可能会很有用，因为在这种情况下，也需要用到具有该名称的内置对象。
+
+**解释**：
+1. **提供对内置标识符的访问**：`builtins` 模块在 Python 中是一个特殊的存在，它包含了 Python 语言中所有的内置名称（如函数、类、异常等）。通过 `builtins` 模块，你可以以 `builtins.标识符` 的形式来访问这些内置的元素。比如，`len` 函数可以通过 `builtins.len` 来引用，这样即使在你的代码中定义了一个名为 `len` 的变量或函数（虽然不建议这样做，因为会造成混淆），你仍然可以通过 `builtins.len` 来访问 Python 原本的内置 `len` 函数。
+2. **应用场景举例**：假设你写了一个模块，在这个模块中定义了一个名为 `sum` 的函数来实现某种特殊的求和逻辑，但是同时你又需要用到 Python 内置的 `sum` 函数来对列表等可迭代对象进行常规求和。这时，你就可以通过 `builtins.sum` 来访问内置的 `sum` 函数，避免与你自己定义的 `sum` 函数产生冲突。也就是说，`builtins` 模块在这种同名冲突的情况下，为你提供了一种能够明确访问到 Python 内置对象的方式。 
+
+# python内置模块builtins的错误用法
+你遇到 `AttributeError: module 'builtins' has no attribute '__file__'` 错误是因为 `builtins` 模块是 Python 解释器内置的，它不是以普通的 `.py` 文件形式存在于文件系统中，所以没有 `__file__` 属性。
+
+### 原因解释
+Python 的内置模块（如 `builtins`）是由解释器直接提供的，它们通常是用 C 语言实现并在解释器启动时加载，并不对应于磁盘上的 `.py` 文件。因此，尝试访问这些模块的 `__file__` 属性会引发 `AttributeError`。
+
+你遇到的 `TypeError: <module 'builtins' (built-in)> is a built-in module` 错误是因为 `inspect.getfile()` 函数不能用于内置模块。`inspect.getfile()` 函数主要用于获取普通 Python 模块（以 `.py` 文件形式存在于文件系统中的模块）的文件路径，而内置模块（如 `builtins`）是由 Python 解释器直接提供的，并非以 `.py` 文件形式存在，所以不能用该函数来获取其文件路径。
+
+### 解决方案
+
+#### 查看内置模块信息
+虽然无法通过 `__file__` 属性找到 `builtins` 模块的文件位置，但你可以使用以下方法来查看它的相关信息：
+
+#### 0. 接受无法获取文件路径的事实
+由于 `builtins` 模块是内置的，没有对应的 `.py` 文件，你需要明白不能通过常规方式获取其文件路径。你可以专注于查看其功能和使用方式，而不是文件位置。
+
+##### 1. 使用 `help()` 函数
+在 Python 解释器中，你可以使用 `help()` 函数来查看 `builtins` 模块的文档和包含的内容。
+```python
+import builtins
+help(builtins)
+```
+这将在控制台输出 `builtins` 模块的详细文档，包括它所包含的所有内置函数、异常和类型等信息。
+
+##### 2. 列出内置模块中的对象
+你可以使用 `dir()` 函数列出 `builtins` 模块中的所有对象。
+```python
+import builtins
+print(dir(builtins))
+```
+这将打印出 `builtins` 模块中定义的所有名称，如 `print`、`len`、`Exception` 等。
+
+#### 在 VSCode 中查看内置模块文档
+如果你想在 VSCode 中查看 `builtins` 模块的详细信息，可以按照以下步骤操作：
+
+1. 打开一个 Python 文件。
+2. 输入 `import builtins` 并保存文件。
+3. 将光标放在 `builtins` 上，按下 `Ctrl` 键（在 Windows/Linux 上）或 `Cmd` 键（在 macOS 上），然后点击鼠标左键。这将打开一个快速文档窗口，显示 `builtins` 模块的相关信息。
+
+如果你想查看 `builtins` 模块中某个特定对象的文档，例如 `print` 函数，可以在代码中输入 `print`，然后使用相同的方法（`Ctrl/Cmd + 点击`）来查看其文档。
+
+总之，由于 `builtins` 是内置模块，没有对应的 `.py` 文件，所以不能通过 `__file__` 属性来定位它，但可以通过其他方式了解其内容和使用方法。
+
+
+
