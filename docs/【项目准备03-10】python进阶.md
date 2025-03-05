@@ -394,3 +394,68 @@ except ValueError:
 
 #### 2. 性能问题
 由于 `eval()` 需要解析和执行代码，因此在性能上可能不如直接编写代码。如果可能的话，应尽量避免在循环或性能敏感的代码中使用 `eval()`。 
+
+# 存根文件怎样使用
+存根文件（Stub Files）扩展名为 `.pyi`，主要用于为Python代码提供类型信息，辅助静态类型检查工具（如 `mypy`）更好地进行类型检查，同时帮助开发者理解代码的输入输出类型。以下是存根文件的使用方法：
+
+### 1. 理解存根文件的结构
+存根文件的结构和普通Python文件类似，但只包含类型注解和函数签名，不包含具体的函数实现。例如，一个简单的 `example.pyi` 存根文件可能如下：
+```python
+# example.pyi
+def add(a: int, b: int) -> int:
+    ...
+```
+这里的 `...` 表示函数没有具体实现，仅提供了类型信息，即 `add` 函数接受两个整数参数，返回一个整数。
+
+### 2. 创建存根文件
+- **手动创建**：当你有一个Python模块或库，想要为其添加类型注解但又不想修改原代码时，可以手动创建存根文件。存根文件的文件名要和对应的Python文件或模块名相同，只是扩展名改为 `.pyi`。例如，对于 `example.py` 文件，对应的存根文件是 `example.pyi`。
+- **自动生成**：可以使用 `stubgen` 工具自动生成存根文件。`stubgen` 是 `mypy` 提供的一个命令行工具，使用方法如下：
+```bash
+stubgen -p your_package_name  # 为一个包生成存根文件
+stubgen your_module.py  # 为一个模块生成存根文件
+```
+
+### 3. 使用存根文件进行类型检查
+- **安装 `mypy`**：`mypy` 是一个常用的Python静态类型检查工具，你可以使用 `pip` 进行安装：
+```bash
+pip install mypy
+```
+- **运行类型检查**：在项目目录下运行 `mypy` 命令，它会自动查找并使用存根文件进行类型检查。例如：
+```bash
+mypy your_script.py
+```
+`mypy` 会检查 `your_script.py` 中的代码是否符合存根文件中定义的类型注解。如果发现类型不匹配的问题，会输出相应的错误信息。
+
+### 4. 示例
+假设我们有一个简单的Python模块 `math_utils.py`：
+```python
+# math_utils.py
+def add(a, b):
+    return a + b
+```
+为其创建存根文件 `math_utils.pyi`：
+```python
+# math_utils.pyi
+def add(a: int, b: int) -> int:
+    ...
+```
+然后编写一个使用 `add` 函数的脚本 `main.py`：
+```python
+# main.py
+from math_utils import add
+
+result = add(1, 2)
+print(result)
+```
+现在运行 `mypy` 进行类型检查：
+```bash
+mypy main.py
+```
+如果代码中存在类型不匹配的问题，`mypy` 会输出错误信息，帮助你发现潜在的类型错误。
+
+### 5. 存根文件的放置位置
+存根文件应和对应的Python文件或模块放在同一目录下，或者放在Python解释器能找到的位置。例如，对于标准库或第三方库，存根文件通常会放在 `typeshed` 项目中，`mypy` 会自动查找这些存根文件。
+
+通过以上步骤，你就可以有效地使用存根文件为Python代码添加类型信息，并进行静态类型检查。 
+
+# 
