@@ -511,5 +511,14 @@ print(dir(builtins))
 
 总之，由于 `builtins` 是内置模块，没有对应的 `.py` 文件，所以不能通过 `__file__` 属性来定位它，但可以通过其他方式了解其内容和使用方法。
 
+# __reversed__ 方法的具体实现存在于 Python 解释器的底层代码（通常是用 C 语言编写的）里。以 CPython 为例，list 类型的具体实现位于 Objects/listobject.c 文件中。我该怎样找到这个listobject.c文件？
 
+如果你想找到CPython中`listobject.c`文件，有以下几种方法：
+
+### 从CPython官方仓库获取
+- **使用浏览器**：可以直接访问[CPython的GitHub仓库](https://github.com/python/cpython)，然后在仓库中通过路径`Objects/listobject.c`找到该文件。
+- **使用命令行**：如果熟悉Git，在命令行中通过`git clone https://github.com/python/cpython.git`命令将CPython仓库克隆到本地，然后在本地文件系统中进入克隆后的目录，找到`Objects`文件夹，其中就有`listobject.c`文件。
+
+### 在VSCode中查找
+- 如果你已经将CPython源码导入到VSCode中，可以使用VSCode的搜索功能。按下`Ctrl + Shift + F`（Windows/Linux）或`Command + Shift + F`（macOS）打开全局搜索框，输入`listobject.c`，VSCode会在整个项目中搜索并定位到该文件。
 
