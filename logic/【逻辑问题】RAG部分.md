@@ -1,0 +1,1 @@
+1. llm_backend -> app -> service -> embedding_service.py -> EmbeddingService -> _get_index_path(), 这个`_get_index_path()`使用`file_path`的哈希值作为二进制索引文件的文件名，也就是说索引文件的文件名和`file_path`唯一一对应，但是我的问题是，索引文件保存的内容是什么？
