@@ -264,4 +264,64 @@ print(result)  # 输出: https://example.com/path
 - `rstrip()` 方法不会修改原字符串，而是返回一个新的字符串。
 - 该方法只移除字符串末尾的指定字符，不会移除字符串开头或中间的字符。如果需要移除字符串开头的指定字符，可以使用 `lstrip()` 方法；如果需要移除字符串两端的指定字符，可以使用 `strip()` 方法。
 
-# 
+# python中eval()
+在 Python 中，`eval()` 是一个内置函数，它可以将字符串作为 Python 表达式进行求值，并返回表达式的结果。以下是关于 `eval()` 函数的详细介绍：
+
+### 基本语法
+```python
+eval(expression, globals=None, locals=None)
+```
+- **`expression`**：这是一个必选参数，是一个字符串，该字符串会被当作 Python 表达式进行求值。
+- **`globals`**：可选参数，是一个字典，用于指定全局命名空间。如果提供了 `globals`，它必须包含 `__builtins__` 键。如果省略该参数，则使用当前的全局命名空间。
+- **`locals`**：可选参数，是一个映射对象（通常是字典），用于指定局部命名空间。如果省略该参数，则使用当前的局部命名空间。
+
+### 简单示例
+```python
+# 计算字符串形式的表达式
+result = eval('2 + 3')
+print(result)  # 输出: 5
+
+# 计算更复杂的表达式
+expression = '3 * (4 + 5)'
+result = eval(expression)
+print(result)  # 输出: 27
+
+# 使用变量
+x = 10
+y = 20
+expression = 'x + y'
+result = eval(expression)
+print(result)  # 输出: 30
+```
+
+### `globals` 和 `locals` 参数的使用
+```python
+# 定义全局命名空间
+globals_dict = {'__builtins__': None, 'a': 10, 'b': 20}
+
+# 定义局部命名空间
+locals_dict = {'b': 30, 'c': 40}
+
+expression = 'a + b + c'
+result = eval(expression, globals_dict, locals_dict)
+print(result)  # 输出: 80
+```
+在上述示例中，`eval()` 函数首先在 `locals_dict` 中查找变量，如果找不到则在 `globals_dict` 中查找。
+
+### 注意事项
+- **安全风险**：`eval()` 函数会执行任意的 Python 代码，因此如果使用不当，会带来严重的安全问题。例如，如果用户输入的字符串被直接传递给 `eval()`，恶意用户可能会输入危险的代码，如删除文件、执行系统命令等。
+```python
+# 存在安全风险的示例
+user_input = 'import os; os.system("rm -rf /")'  # 危险代码
+eval(user_input)  # 不要在实际代码中这样做
+```
+为了避免安全风险，应尽量避免使用 `eval()` 处理用户输入的字符串。如果确实需要处理用户输入的表达式，可以考虑使用更安全的替代方案，如 `ast.literal_eval()`，它只能处理 Python 字面值（如数字、字符串、列表、字典等）。
+```python
+import ast
+
+# 安全的示例
+user_input = '[1, 2, 3]'
+result = ast.literal_eval(user_input)
+print(result)  # 输出: [1, 2, 3]
+```
+- **性能问题**：由于 `eval()` 需要解析和执行代码，因此在性能上可能不如直接编写代码。如果可能的话，应尽量避免在循环或性能敏感的代码中使用 `eval()`。
