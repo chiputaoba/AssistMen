@@ -226,4 +226,42 @@ print(sorted_results)
 ### 总结
 这行代码通过 `sorted()` 函数和 `lambda` 匿名函数，根据 `results` 列表中每个元素的 `'similarity'` 键对应的值对列表进行降序排序，最终返回一个新的已排序列表。在实际应用中，常用于根据某个特定字段对数据列表进行排序，以便展示或进一步处理。 
 
+# base_url.rstrip('/')
+在 Python 中，`base_url.rstrip('/')` 这行代码调用了字符串对象的 `rstrip()` 方法。下面详细解释这个方法的作用、使用场景以及示例。
+
+### 方法作用
+`rstrip()` 是 Python 字符串对象的一个内置方法，用于移除字符串末尾（右侧）的指定字符。如果不指定参数，它会默认移除字符串末尾的空白字符（包括空格、制表符、换行符等）；当指定参数时，它会移除字符串末尾所有连续的指定字符。
+
+在 `base_url.rstrip('/')` 中，`base_url` 是一个字符串变量，`rstrip('/')` 表示移除 `base_url` 字符串末尾所有连续的斜杠字符 `'/'`。
+
+### 使用场景
+在处理 URL 时，经常会遇到 URL 末尾带有多余斜杠的情况。例如，用户输入的 URL 可能是 `https://example.com/`，而在某些情况下，我们希望统一处理 URL，去除末尾多余的斜杠，这时就可以使用 `rstrip('/')` 方法。
+
+### 示例代码
+```python
+# 示例 1：末尾有多个斜杠
+base_url = "https://example.com///"
+result = base_url.rstrip('/')
+print(result)  # 输出: https://example.com
+
+# 示例 2：末尾没有斜杠
+base_url = "https://example.com"
+result = base_url.rstrip('/')
+print(result)  # 输出: https://example.com
+
+# 示例 3：中间有斜杠
+base_url = "https://example.com/path/"
+result = base_url.rstrip('/')
+print(result)  # 输出: https://example.com/path
+```
+
+### 代码解释
+- **示例 1**：`base_url` 末尾有多个斜杠，`rstrip('/')` 会移除这些斜杠，最终结果为 `https://example.com`。
+- **示例 2**：`base_url` 末尾没有斜杠，`rstrip('/')` 不会对字符串进行任何修改，直接返回原字符串。
+- **示例 3**：`base_url` 中间有斜杠，`rstrip('/')` 只会移除末尾的斜杠，不会影响中间的斜杠，最终结果为 `https://example.com/path`。
+
+### 注意事项
+- `rstrip()` 方法不会修改原字符串，而是返回一个新的字符串。
+- 该方法只移除字符串末尾的指定字符，不会移除字符串开头或中间的字符。如果需要移除字符串开头的指定字符，可以使用 `lstrip()` 方法；如果需要移除字符串两端的指定字符，可以使用 `strip()` 方法。
+
 # 
