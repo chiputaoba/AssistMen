@@ -131,3 +131,35 @@
 
 ### **总结**
 脚本是**无需编译的轻量级程序**，通过解释器直接执行文本指令，适合快速实现功能或自动化操作。其灵活性和跨平台性使其成为开发者日常工作中不可或缺的工具。
+
+
+
+# Poe => python -m graphrag init --root ./  这条命令每个部分是什么
+
+`Poe => python -m graphrag init --root ./` 并不是一条可直接在命令行运行的标准命令，从形式上看，它可能是 `poethepoet` 任务运行器在 `pyproject.toml` 文件里定义的一个任务。下面为你详细分析各部分含义：
+
+### 1. `Poe`
+- `Poe` 是 `poethepoet` 工具在命令行调用任务时使用的标识。`poethepoet` 是一个用于简化 Python 项目中脚本执行的任务运行器，它允许你在 `pyproject.toml` 文件里定义一系列任务，之后通过 `poe` 命令来执行这些任务。
+
+### 2. `=>`
+- 在 `poethepoet` 的配置语法中，`=>` 起到分隔任务名称和任务实际执行命令的作用。它表明左边是任务的名称，右边是该任务要执行的具体命令。
+
+### 3. `python -m graphrag init --root ./`
+这是任务实际要执行的命令，下面对该命令各部分进行详细解释：
+- **`python`**：代表 Python 解释器，用于执行 Python 代码。
+- **`-m`**：是 Python 解释器的一个选项，其作用是将一个 Python 模块作为脚本运行。它会把紧跟其后的模块名当作可执行脚本来启动。
+- **`graphrag`**：这是一个 Python 模块的名称。`python -m graphrag` 意味着要运行 `graphrag` 模块。通常，Python 解释器会查找该模块里的 `__main__.py` 文件并执行其中的代码。
+- **`init`**：是传递给 `graphrag` 模块的一个命令参数，表明要执行初始化操作。一般来说，`graphrag` 模块会根据这个参数来执行特定的初始化逻辑。
+- **`--root ./`**：`--root` 是一个命令行选项，用于指定根目录。`./` 表示当前目录，所以 `--root ./` 表示将当前目录作为根目录传递给 `graphrag` 模块的初始化操作。
+
+### 示例
+以下是一个 `pyproject.toml` 文件中该任务的配置示例：
+```toml
+[tool.poe.tasks]
+Poe = "python -m graphrag init --root ./"
+```
+当你在命令行中运行 `poe Poe` 时，就会执行 `python -m graphrag init --root ./` 这个命令。 
+
+
+
+# 
